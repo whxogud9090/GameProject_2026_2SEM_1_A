@@ -1,6 +1,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+public enum PlayerState
+{
+    Normal,
+    Pickup,
+}
+
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Animator animator;                 // 애니메이터
@@ -16,6 +22,7 @@ public class PlayerController : MonoBehaviour
 
     private CharacterController controller;                    // 유니티 캐릭터 컨트롤러 접근
     private float verticalVelocity;                             // 수평 이동의 속도값 정의
+    private PlayerState currentState = PlayerState.Normal;
 
     private void Awake()
     {
@@ -31,6 +38,13 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        ApplyGravity();
+        if (currentState != PlayerState.Normal) return;
+        HandleMovement(keyboard);
+    }
+
+    private void HandleMovement(Keyboard keyboard)
+    {
         Vector2 input = Vector2.zero;
 
         if (keyboard.aKey.isPressed)
@@ -83,20 +97,6 @@ public class PlayerController : MonoBehaviour
             );
         }
 
-        // 7. 기본 중력 설정
-        if (controller.isGrounded && verticalVelocity < 0f)
-        {
-            verticalVelocity = -2f;
-        }
-        else
-        {
-            verticalVelocity += gravity * Time.deltaTime;
-        }
-
-        controller.Move(
-            Vector3.up * verticalVelocity * Time.deltaTime
-        );
-
         // 8. Idle, Walk, Run 애니메이션
         float animationSpeed = 0f;
 
@@ -112,6 +112,26 @@ public class PlayerController : MonoBehaviour
             Time.deltaTime
         );
     }
+    private void ApplyGravity()
+    {
+        if (controller.isGrounded && verticalVelocity < 0f)
+        {
+            verticalVelocity = -2f;
+        }
+        else
+        {
+            verticalVelocity += gravity * Time.deltaTime;
+        }
+        controller.Move(Vector3.up * verticalVelocity * Time.deltaTime);
+    }
 
-
+    public void ChangeState(PlayerState newState)
+    {
+        currentState = newState;
+        if (currentState != PlayerState.Normal)
+        {
+            animator.SetFloat("speed", 0);
+        }
+        Debug.Log("현재 상태 : " + currentState);
+    }
 }
