@@ -5,6 +5,7 @@ public enum PlayerState
 {
     Normal,
     Pickup,
+    inventory,
 }
 
 public class PlayerController : MonoBehaviour
@@ -133,5 +134,10 @@ public class PlayerController : MonoBehaviour
             animator.SetFloat("speed", 0);
         }
         Debug.Log("현재 상태 : " + currentState);
+    }
+
+    public bool IsNormalState()
+    {
+        return currentState == PlayerState.Normal;
     }
 }
