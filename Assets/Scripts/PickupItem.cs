@@ -17,9 +17,11 @@ public class PickupItem : MonoBehaviour
     [SerializeField] private float floatingSpeed = 2f;
     private Vector3 startPosition;
     private SimpleInventory inventory;
+    private AchievementManager achievementManager;
 
     public void Awake()
     {
+        achievementManager = FindFirstObjectByType<AchievementManager>();
         questManager = FindFirstObjectByType<QuestManager>();
         inventory = FindFirstObjectByType<SimpleInventory>();
     }
@@ -51,6 +53,10 @@ public class PickupItem : MonoBehaviour
         if (questManager != null)
         {
             questManager.AddQuestItem(itemName, amount);
+        }
+        if (achievementManager != null)
+        {
+            achievementManager.ItemCollected(amount);
         }
         Destroy(gameObject);
     }

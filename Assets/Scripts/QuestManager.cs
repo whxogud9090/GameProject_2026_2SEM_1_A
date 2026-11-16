@@ -6,10 +6,12 @@ public class QuestManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI questText;
     private Quest currentQuest;
     private SimpleInventory inventory;
+    private AchievementManager achievementManager;
 
     private void Awake()
     {
         inventory = FindFirstObjectByType<SimpleInventory>();
+        achievementManager = FindFirstObjectByType<AchievementManager>();
     }
 
     void Start()
@@ -77,6 +79,10 @@ public class QuestManager : MonoBehaviour
             return;
         }
         currentQuest.state = QuestState.Completed;
+        if (achievementManager != null)
+        {
+            achievementManager.QuestCompleted();
+        }
         Debug.Log(currentQuest.questName + " 퀘스트 완료!");
         UpdateQuestText();
     }
